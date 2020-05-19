@@ -27,7 +27,7 @@ from random import randint
 
 
 # can set AL to a list to run multiple tests on different sized arrays
-AL = [4,5]
+AL = [8,9,10]
 
 #output lists if multiple runs were perfermed
 mean_errors_list = []
