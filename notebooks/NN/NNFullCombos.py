@@ -1,8 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
 
 from pylab import *
 import tensorflow as tf
@@ -27,7 +22,7 @@ from random import randint
 
 
 # can set AL to a list to run multiple tests on different sized arrays
-AL = [8,9,10]
+AL = [3]
 
 #output lists if multiple runs were perfermed
 mean_errors_list = []
@@ -222,7 +217,7 @@ for size in AL:
 #this section randomly generates validation data between the min and the max for us to train against. The model uses its training x and y data to improve itself, but will compare on unseen validation 
 #data to make sure it is not overfitting as much 
 #takes random number samples between the min/max for each variable
-    num_samp = 1000000
+    num_samp = 1000
 
     dt = 60 # Time step
     dx = 1800 # segment length
@@ -325,7 +320,7 @@ for size in AL:
     Y = []
     M = []
 #select the number of points you'd like to sample
-    num_samp = 10000
+    num_samp = 1000
 
     dt = 60 # Time step
     dx = 1800 # segment length
