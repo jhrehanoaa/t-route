@@ -3,6 +3,7 @@ import sys;sys.path.append(r'../fortran_routing/mc_pylink_v00/MC_singleSeg_singl
 import mc_sseg_stime_NOLOOP as mc
 import itertools
 import NN_normalization
+import NN_gen_training_data
 
 def main():
     Y = []

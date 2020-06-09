@@ -5,15 +5,35 @@ import mc_sseg_stime_NOLOOP as mc
 import itertools
 import NN_normalization
 
+
+AL = [5]
+mean_errors_list = []
+max_errors_list = []
+mean_rel_errors_list = []
+max_rel_errors_list = []
 def main():
 
-    AL = [3]
-
+    normalize = NN_normalization.normalize
     #output lists if multiple runs were perfermed
-    mean_errors_list = []
-    max_errors_list = []
-    mean_rel_errors_list = []
-    max_rel_errors_list = []
+
+    def singlesegment(
+            dt # dt
+            , qup = None # qup can be anything
+            , quc = None # quc will not be more than a 10 percent diff than qup
+            , qlat = None # ql can be anything - key 
+            , qdp = None # qdp will not be more than 20 percent diff than qup+qlat
+            , dx = None # dx fully variable 
+            , bw = None # bw correlated to tw, tw always > bw
+            , tw = None # tw correlated to bw, bw always < tw
+            , twcc = None # twcc always > than tw, tw of broader floodplain
+            , n_manning = None # usually smaller than n_manning_cc
+            , n_manning_cc = None # ncc usually greater than n_manning
+            , cs = None # cs correlated to bw and tw
+            , s0 = None # s0 variable 
+            , velp = None # velocity at previous time step not rel
+            , depthp = None # depth at previous time step starting point for iteration depthp = approx(y_direct(bw,n_manning,s0,avg(qup,qdp)))
+        ):
+    
 
     for size in AL:
     # these are the min a max ranges for each input variable. Based on array length specified this will slice these ranges up to be used in our combinations of test data.
@@ -126,7 +146,7 @@ def main():
             s0=i[7],
             velp=velp,
             depthp=i[8])
-            Y.append((S[0]))
+            Y.append((S[0])*1000)
             if len(Y)%100000 == 0:
                 print(len(Y))
     #this section just adds a test sample with the expected output of .75 to the end of our data in case we would like to compare it
@@ -171,3 +191,4 @@ def main():
 
         print(Y[-1])
         print(M[-1])
+        
