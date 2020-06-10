@@ -18,10 +18,6 @@ def singlesegment(
                 , velp = None # velocity at previous time step not rel
                 , depthp = None # depth at previous time step starting point for iteration depthp = approx(y_direct(bw,n_manning,s0,avg(qup,qdp)))
             ):
-
-            
-            
-
             
             # call Fortran routine
             return mc.muskingcungenwm(

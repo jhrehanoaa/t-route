@@ -24,6 +24,7 @@ def main(
     tw_max,
     bw_min,
     bw_max):
+
     AL = [5]
 
     #output lists if multiple runs were perfermed
@@ -144,7 +145,7 @@ def main(
             s0=i[7],
             velp=velp,
             depthp=i[8])
-            Y.append((S[0])*1000)
+            Y.append((S[0]))
             if len(Y)%100000 == 0:
                 print(len(Y))
     #this section just adds a test sample with the expected output of .75 to the end of our data in case we would like to compare it
@@ -178,7 +179,7 @@ def main(
             normalize(s0, s0_max, s0_min),
             # velp, 
             normalize(depthp,depthp_max,depthp_min)])
-        Y.append(0.7570106983184814*1000)
+        Y.append(0.7570106983184814)
 
         # M = np.array(M)
         # for i in range(0,len(M),1):

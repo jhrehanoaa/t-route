@@ -28,7 +28,7 @@ tw_max,
 bw_min,
 bw_max
 ):
-    num_samp = 1000
+    num_samp = 100000
         
     dt = 60 # Time step
     dx = 1800 # segment length
@@ -84,7 +84,7 @@ bw_max
                                     s0=s0[i],
                                     velp=velp,
                                     depthp=depthp[i])
-        VAL_y.append(S[0]*1000)
+        VAL_y.append(S[0])
     VAL_x = np.array(VAL_x)
     VAL_y = np.array(VAL_y)
     return (

@@ -75,7 +75,7 @@ def main(
                                     cs=cs[i],
                                     s0=s0[i],
                                     velp=velp,
-                                    depthp=depthp[i])*1000
+                                    depthp=depthp[i])
 
         temp_y_interp = regr.predict(np.array( [[NN_normalization.normalize(qup[i],qup_max,qup_min), 
                                         NN_normalization.normalize(quc[i],quc_max,quc_min), 
