@@ -4,36 +4,33 @@ import sys;sys.path.append(r'../fortran_routing/mc_pylink_v00/MC_singleSeg_singl
 import mc_sseg_stime_NOLOOP as mc
 import itertools
 import NN_normalization
+import nwm_single_segment
+def main(
+    depthp_min,
+    depthp_max,
+    qlat_min,
+    qlat_max,
+    qdp_min,
+    qdp_max,
+    quc_min,
+    quc_max,
+    qup_min,
+    qup_max,
+    s0_min,
+    s0_max,
+    cs_min,
+    cs_max,
+    tw_min,
+    tw_max,
+    bw_min,
+    bw_max):
+    AL = [5]
 
-
-AL = [5]
-mean_errors_list = []
-max_errors_list = []
-mean_rel_errors_list = []
-max_rel_errors_list = []
-def main():
-
-    normalize = NN_normalization.normalize
     #output lists if multiple runs were perfermed
-
-    def singlesegment(
-            dt # dt
-            , qup = None # qup can be anything
-            , quc = None # quc will not be more than a 10 percent diff than qup
-            , qlat = None # ql can be anything - key 
-            , qdp = None # qdp will not be more than 20 percent diff than qup+qlat
-            , dx = None # dx fully variable 
-            , bw = None # bw correlated to tw, tw always > bw
-            , tw = None # tw correlated to bw, bw always < tw
-            , twcc = None # twcc always > than tw, tw of broader floodplain
-            , n_manning = None # usually smaller than n_manning_cc
-            , n_manning_cc = None # ncc usually greater than n_manning
-            , cs = None # cs correlated to bw and tw
-            , s0 = None # s0 variable 
-            , velp = None # velocity at previous time step not rel
-            , depthp = None # depth at previous time step starting point for iteration depthp = approx(y_direct(bw,n_manning,s0,avg(qup,qdp)))
-        ):
-    
+    mean_errors_list = []
+    max_errors_list = []
+    mean_rel_errors_list = []
+    max_rel_errors_list = []
 
     for size in AL:
     # these are the min a max ranges for each input variable. Based on array length specified this will slice these ranges up to be used in our combinations of test data.
@@ -47,7 +44,7 @@ def main():
         tw_min = 150; tw_max = 500;
         bw_min = 112; bw_max = 150;
 
-        # singlesegment():
+        # nwm_single_segment.singlesegment():
         array_length = size 
 
         dt = 60 # Time step
@@ -73,11 +70,12 @@ def main():
 
         
         #this is a normalization function that is used to scale the input variables between 0-1 to make the network train more efficiently. If not normalized some values may influence the NN too much
-        
+        def normalize(val,max,min,target_max=1,target_min=0):
+            return (val-min)/(max-min)*(target_max-target_min)+target_min
 
 
     #MC function that allows us to calculate the expected outputs used as our Y output. Can be used to generate real calculations from the MC code.
-
+        
             #return qdc, vel, depth
             
     
@@ -130,7 +128,7 @@ def main():
                                             #     # velp, 
                                             #     normalize(depthp[depthp_s],depthp_max,depthp_min)])
 
-            S = singlesegment(
+            S = nwm_single_segment.singlesegment(
             dt=dt,
             qup=i[0],
             quc=i[1],
@@ -180,15 +178,23 @@ def main():
             normalize(s0, s0_max, s0_min),
             # velp, 
             normalize(depthp,depthp_max,depthp_min)])
-        Y.append(0.7570106983184814)
+        Y.append(0.7570106983184814*1000)
 
         # M = np.array(M)
         # for i in range(0,len(M),1):
-        #     S = singlesegment(*M[i])
+        #     S = nwm_single_segment.singlesegment(*M[i])
         #     Y.append(S[0])
         Y = np.array(Y)    
         M = np.array(M)
 
         print(Y[-1])
         print(M[-1])
-        
+        return (
+            M,
+            Y,
+            mean_errors_list,
+            max_errors_list,
+            mean_rel_errors_list,
+            max_rel_errors_list,
+            AL
+            )

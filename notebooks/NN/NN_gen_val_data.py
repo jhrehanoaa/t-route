@@ -3,10 +3,33 @@ import sys;sys.path.append(r'../fortran_routing/mc_pylink_v00/MC_singleSeg_singl
 import mc_sseg_stime_NOLOOP as mc
 import itertools
 import NN_normalization
+import nwm_single_segment
 
-def main():
 
-    num_samp = 1000000
+
+    
+def main(
+depthp_min,
+depthp_max,
+qlat_min,
+qlat_max,
+qdp_min,
+qdp_max,
+quc_min,
+quc_max,
+qup_min,
+qup_max,
+s0_min,
+s0_max,
+cs_min,
+cs_max,
+tw_min,
+tw_max,
+bw_min,
+bw_max
+):
+    num_samp = 1000
+        
     dt = 60 # Time step
     dx = 1800 # segment length
     # bw = np.linspace(0.135, 230.035, array_length, endpoint=True) # Trapezoidal bottom width
@@ -30,21 +53,21 @@ def main():
     VAL_x = []
     VAL_y = []
     for i in range(num_samp):
-        VAL_x.append( [normalize(qup[i],qup_max,qup_min), 
-        normalize(quc[i],quc_max,quc_min), 
-        normalize(qlat[i],qlat_max,qlat_min),
-        normalize(qdp[i],qdp_max,qdp_min),
+        VAL_x.append( [NN_normalization.normalize(qup[i],qup_max,qup_min), 
+        NN_normalization.normalize(quc[i],quc_max,quc_min), 
+        NN_normalization.normalize(qlat[i],qlat_max,qlat_min),
+        NN_normalization.normalize(qdp[i],qdp_max,qdp_min),
         # dx,  
-        normalize(bw[i],bw_max,bw_min),
-        normalize(tw[i],tw_max,tw_min),
-        # normalize(tw[tw_o]*3,tw_max,tw_min),
+        NN_normalization.normalize(bw[i],bw_max,bw_min),
+        NN_normalization.normalize(tw[i],tw_max,tw_min),
+        # NN_normalization.normalize(tw[tw_o]*3,tw_max,tw_min),
         # n_manning, 
         # n_manning_cc, 
-        normalize(cs[i],cs_max,cs_min),
-        normalize(s0[i], s0_max, s0_min),
+        NN_normalization.normalize(cs[i],cs_max,cs_min),
+        NN_normalization.normalize(s0[i], s0_max, s0_min),
         # velp, 
-        normalize(depthp[i],depthp_max,depthp_min)])
-        S = singlesegment(
+        NN_normalization.normalize(depthp[i],depthp_max,depthp_min)])
+        S = nwm_single_segment.singlesegment(
                                     dt=dt,
                                     qup=qup[i],
                                     quc=quc[i],
@@ -60,7 +83,11 @@ def main():
                                     cs=cs[i],
                                     s0=s0[i],
                                     velp=velp,
-                                    depthp=depthp[i])*1000
-        VAL_y.append(S[0])
+                                    depthp=depthp[i])
+        VAL_y.append(S[0]*1000)
     VAL_x = np.array(VAL_x)
     VAL_y = np.array(VAL_y)
+    return (
+        VAL_x,
+        VAL_y
+    )
