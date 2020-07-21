@@ -265,7 +265,7 @@ def set_supernetwork_data(
         )
         return rv
     
-        elif supernetwork == "CapeFear_FULL_RES":
+    elif supernetwork == "CapeFear_FULL_RES":
         rv = set_supernetwork_data(
             supernetwork="CONUS_FULL_RES_v20", geo_input_folder=geo_input_folder
         )
