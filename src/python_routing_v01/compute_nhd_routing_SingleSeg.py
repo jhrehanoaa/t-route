@@ -1029,23 +1029,27 @@ def main():
     # initialize flowveldepth dict
     qlateral = {connection: {"qlatval": [],} for connection in connections}
 
-    if ( 1==1
+    if (
+        1
+        == 1
         # run_route_and_replace_test
     ):  # test 2. Take lateral flow from wrf-hydro r&r output
-        ql_input_folder = r"/home/APD/inland_hydraulics/wrf-hydro-run/OUTPUTS"
-        ql_files = glob.glob(ql_input_folder + "/*.CHRTOUT_DOMAIN1")
+        # data[supernetwork_data["bottomwidth_col"]]
+        ql_input_folder = supernetwork_data["ql_input_folder"]
+        ql_files_tail = supernetwork_data["ql_files_tail"]
+        ql_files = glob.glob(ql_input_folder + ql_files_tail)
         # build a time string to specify input date
-        time_string = "2020-03-19_18:00_DOMAIN1"
+        time_string = supernetwork_data["time_string"]
 
         channel_initial_states_file = (
-            r"/home/APD/inland_hydraulics/wrf-hydro-run/restart/HYDRO_RST."
-            + time_string
+            supernetwork_data["channel_initial_states_file"] + time_string
         )
         initial_states_channel_ID_crosswalk_file = ql_files[0]
 
         waterbody_intial_states_file = channel_initial_states_file
-        initial_states_waterbody_ID_crosswalk_file = r"/home/APD/inland_hydraulics/wrf-hydro-run/DOMAIN/waterbody_subset_ID_crosswalk.csv"
-        #
+        initial_states_waterbody_ID_crosswalk_file = supernetwork_data[
+            "initial_states_waterbody_ID_crosswalk_file"
+        ]
 
         ql_df = nnu.get_ql_from_wrf_hydro(ql_files)
 

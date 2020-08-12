@@ -636,6 +636,11 @@ def set_supernetwork_data(
             "driver_string": "NetCDF",
             "layer_string": 0,
             "waterbody_parameter_file_type": "Level_Pool",
+            "ql_input_folder": r"/home/APD/inland_hydraulics/wrf-hydro-run/OUTPUTS",
+            "ql_files_tail": "/*.CHRTOUT_DOMAIN1",
+            "time_string": "2020-03-19_18:00_DOMAIN1",
+            "channel_initial_states_file": r"/home/APD/inland_hydraulics/wrf-hydro-run/restart/HYDRO_RST.",
+            "initial_states_waterbody_ID_crosswalk_file": r"/home/APD/inland_hydraulics/wrf-hydro-run/DOMAIN/waterbody_subset_ID_crosswalk.csv",
             "waterbody_parameters": {
                 "level_pool_waterbody_parameter_file_path": os.path.join(
                     geo_input_folder, "NWM_2.1_Sample_Datasets", "LAKEPARM_CONUS.nc"
