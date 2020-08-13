@@ -1038,6 +1038,10 @@ def main():
         ql_input_folder = supernetwork_data["ql_input_folder"]
         ql_files_tail = supernetwork_data["ql_files_tail"]
         ql_files = glob.glob(ql_input_folder + ql_files_tail)
+        routelink_subset = supernetwork_data["routelink_subset"]
+        level_pool_waterbody_parameter_file_path = supernetwork_data[
+            "waterbody_parameters"
+        ]["level_pool_waterbody_parameter_file_path"]
         # build a time string to specify input date
         time_string = supernetwork_data["time_string"]
 
@@ -1059,6 +1063,10 @@ def main():
 
         waterbody_initial_states_df = nnu.get_reservoir_restart_from_wrf_hydro(
             waterbody_intial_states_file, initial_states_waterbody_ID_crosswalk_file
+        )
+
+        ordered_lakes_df = nnu.get_waterbody_ID_subset_crosswalk(
+            routelink_subset, level_pool_waterbody_parameter_file_path
         )
 
     ###

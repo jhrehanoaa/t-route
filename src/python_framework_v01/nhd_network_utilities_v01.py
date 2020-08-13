@@ -641,6 +641,7 @@ def set_supernetwork_data(
             "time_string": "2020-03-19_18:00_DOMAIN1",
             "channel_initial_states_file": r"/home/APD/inland_hydraulics/wrf-hydro-run/restart/HYDRO_RST.",
             "initial_states_waterbody_ID_crosswalk_file": r"/home/APD/inland_hydraulics/wrf-hydro-run/DOMAIN/waterbody_subset_ID_crosswalk.csv",
+            "routelink_subset": r"/home/APD/inland_hydraulics/wrf-hydro-run/DOMAIN/routeLink_subset.nc",
             "waterbody_parameters": {
                 "level_pool_waterbody_parameter_file_path": os.path.join(
                     geo_input_folder, "NWM_2.1_Sample_Datasets", "LAKEPARM_CONUS.nc"
@@ -772,3 +773,19 @@ def get_reservoir_restart_from_wrf_hydro(
     resdf = resdf.set_index(["Waterbody"])
     init_waterbody_states = resdf
     return init_waterbody_states
+
+
+def get_waterbody_ID_subset_crosswalk(
+    routelink_subset, level_pool_waterbody_parameter_file_path
+):
+    ds = xr.open_dataset(routelink_subset)
+    df2 = ds.to_dataframe()
+    df2 = df2.loc[df2["NHDWaterbodyComID"] != -9999]
+
+    unique_WB = df2.NHDWaterbodyComID.unique()
+    unique_WB_df = pd.DataFrame(unique_WB, columns=["Waterbody"])
+    temp_IDs = list(unique_WB_df["Waterbody"])
+    ds = xr.open_dataset(level_pool_waterbody_parameter_file_path)
+    df1 = ds.to_dataframe()
+    ordered_lakes_df = df1[df1["lake_id"].isin(temp_IDs)]
+    return ordered_lakes_df

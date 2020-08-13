@@ -24,6 +24,7 @@
     "time_string": "2020-03-19_18:00_DOMAIN1",
     "channel_initial_states_file": "/home/APD/inland_hydraulics/wrf-hydro-run/restart/HYDRO_RST.",
     "initial_states_waterbody_ID_crosswalk_file": "/home/APD/inland_hydraulics/wrf-hydro-run/DOMAIN/waterbody_subset_ID_crosswalk.csv",
+    "routelink_subset": "/home/APD/inland_hydraulics/wrf-hydro-run/DOMAIN/routeLink_subset.nc",
     "waterbody_parameters": {
         "level_pool_waterbody_parameter_file_path": "/home/APD/inland_hydraulics/wrf-hydro-run/DOMAIN/LAKEPARM.nc",
         "level_pool_waterbody_area": "LkArea", 
