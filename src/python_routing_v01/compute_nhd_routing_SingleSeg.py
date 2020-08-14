@@ -1035,25 +1035,26 @@ def main():
         # run_route_and_replace_test
     ):  # test 2. Take lateral flow from wrf-hydro r&r output
         # data[supernetwork_data["bottomwidth_col"]]
-        ql_input_folder = supernetwork_data["ql_input_folder"]
-        ql_files_tail = supernetwork_data["ql_files_tail"]
+        ql_input_folder = supernetwork_data["initial_states_input"]["ql_input_folder"]
+        ql_files_tail = supernetwork_data["initial_states_input"]["ql_files_tail"]
         ql_files = glob.glob(ql_input_folder + ql_files_tail)
-        routelink_subset = supernetwork_data["routelink_subset"]
+        routelink_subset = supernetwork_data["initial_states_input"]["routelink_subset"]
         level_pool_waterbody_parameter_file_path = supernetwork_data[
             "waterbody_parameters"
         ]["level_pool_waterbody_parameter_file_path"]
         # build a time string to specify input date
-        time_string = supernetwork_data["time_string"]
+        time_string = supernetwork_data["initial_states_input"]["time_string"]
 
         channel_initial_states_file = (
-            supernetwork_data["channel_initial_states_file"] + time_string
+            supernetwork_data["initial_states_input"]["channel_initial_states_file"]
+            + time_string
         )
         initial_states_channel_ID_crosswalk_file = ql_files[0]
 
         waterbody_intial_states_file = channel_initial_states_file
         initial_states_waterbody_ID_crosswalk_file = supernetwork_data[
-            "initial_states_waterbody_ID_crosswalk_file"
-        ]
+            "initial_states_input"
+        ]["initial_states_waterbody_ID_crosswalk_file"]
 
         ql_df = nnu.get_ql_from_wrf_hydro(ql_files)
 
@@ -1063,10 +1064,6 @@ def main():
 
         waterbody_initial_states_df = nnu.get_reservoir_restart_from_wrf_hydro(
             waterbody_intial_states_file, initial_states_waterbody_ID_crosswalk_file
-        )
-
-        ordered_lakes_df = nnu.get_waterbody_ID_subset_crosswalk(
-            routelink_subset, level_pool_waterbody_parameter_file_path
         )
 
     ###
@@ -1117,6 +1114,11 @@ def main():
             ordered_networks[network["network_seqorder"]].append(
                 (terminal_segment, network)
             )
+
+        waterbodies_df2 = waterbodies_df.reset_index()
+        ordered_lakes_df = nnu.get_waterbody_ID_subset_crosswalk(
+            routelink_subset, waterbodies_df2
+        )
     else:
         max_network_seqorder = 0
         ordered_networks = {}
