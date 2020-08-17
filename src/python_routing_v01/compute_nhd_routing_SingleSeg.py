@@ -157,7 +157,12 @@ def _handle_args():
         dest="customnetworkfile",
         help="OR... if 'custom' is chosen for the supernetwork, please enter the path of a .json file containing the supernetwork information. See test/input/json/CustomInput.json for an example.",
     )
-
+    parser.add_argument(
+        "--ql_input_folder",
+        help="Select a q lateral input folder",
+        dest="ql_input_folder",
+        default="/home/APD/inland_hydraulics/wrf-hydro-run/OUTPUTS",
+    )
     return parser.parse_args()
 
     if args.supernetwork == "custom" and not args.customnetworkfile:
@@ -1035,7 +1040,11 @@ def main():
         # run_route_and_replace_test
     ):  # test 2. Take lateral flow from wrf-hydro r&r output
         # data[supernetwork_data["bottomwidth_col"]]
-        ql_input_folder = supernetwork_data["initial_states_input"]["ql_input_folder"]
+        ql_input_folder = supernetwork_data["initial_states_input"].get(
+            "ql_input_folder", None
+        )
+        if ql_input_folder == None:
+            ql_input_folder == args.ql_input_folder
         ql_files_tail = supernetwork_data["initial_states_input"]["ql_files_tail"]
         ql_files = glob.glob(ql_input_folder + ql_files_tail)
         routelink_subset = supernetwork_data["initial_states_input"]["routelink_subset"]
@@ -1119,6 +1128,14 @@ def main():
         ordered_lakes_df = nnu.get_waterbody_ID_subset_crosswalk(
             routelink_subset, waterbodies_df2
         )
+
+        reordered_restart_file_df, length_check = nnu.reorder_restart_file_df(
+            level_pool_waterbody_parameter_file_path,
+            channel_initial_states_file,
+            initial_states_waterbody_ID_crosswalk_file,
+            routelink_subset,
+        )
+        print(length_check)
     else:
         max_network_seqorder = 0
         ordered_networks = {}

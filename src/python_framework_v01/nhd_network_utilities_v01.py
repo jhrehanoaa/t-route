@@ -790,3 +790,54 @@ def get_waterbody_ID_subset_crosswalk(routelink_subset, waterbodies_df2):
     # waterbodies_df
     ordered_lakes_df = waterbodies_df2[waterbodies_df2["lake_id"].isin(temp_IDs)]
     return ordered_lakes_df
+
+
+def reorder_restart_file_df(
+    level_pool_waterbody_parameter_file_path,
+    channel_initial_states_file,
+    initial_states_waterbody_ID_crosswalk_file,
+    routelink_subset,
+):
+    ds = xr.open_dataset(routelink_subset)
+    df2 = ds.to_dataframe()
+    df2 = df2.loc[df2["NHDWaterbodyComID"] != -9999]
+
+    unique_WB = df2.NHDWaterbodyComID.unique()
+    unique_WB_df = pd.DataFrame(unique_WB, columns=["Waterbody"])
+    routelink_length = len(list(unique_WB_df["Waterbody"]))
+
+    df = pd.read_csv(initial_states_waterbody_ID_crosswalk_file)
+    temp_IDs = list(df["Waterbody"])
+    ds = xr.open_dataset(level_pool_waterbody_parameter_file_path)
+    df1 = ds.to_dataframe()
+    df1
+    ordered_lakes_df = df1[df1["lake_id"].isin(temp_IDs)]
+    ordered_lakes_df = ordered_lakes_df.reset_index()
+    ordered_lakes_df = ordered_lakes_df.set_index("lake_id")
+    temp_IDs = list(ordered_lakes_df["feature_id"])
+    temp_IDs
+
+    ds = xr.open_dataset(channel_initial_states_file)
+    df2 = ds.to_dataframe()
+    df2 = df2.loc[0]
+    df2 = df2.reset_index()
+    df2
+    new_df = df2[df2["links"].isin(temp_IDs)]
+    new_df
+
+    if len(new_df) == routelink_length:
+        length_check = (
+            "Number of lakes in the restart file is equal to the routhlink file"
+        )
+        reordered_restart_file = new_df
+    elif len(new_df) < routelink_length:
+        length_check = (
+            "Number of lakes in the restart file is greater than the routelink file"
+        )
+        reordered_restart_file = new_df
+    else:
+        reordered_restart_file = None
+        length_check = (
+            "Number of lakes in the restart file is less than the routelink file"
+        )
+    return reordered_restart_file_df, length_check
