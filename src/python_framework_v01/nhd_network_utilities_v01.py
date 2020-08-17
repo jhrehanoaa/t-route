@@ -829,14 +829,14 @@ def reorder_restart_file_df(
         length_check = (
             "Number of lakes in the restart file is equal to the routhlink file"
         )
-        reordered_restart_file = new_df
+        reordered_restart_file_df = new_df
     elif len(new_df) < routelink_length:
         length_check = (
             "Number of lakes in the restart file is greater than the routelink file"
         )
-        reordered_restart_file = new_df
+        reordered_restart_file_df = new_df
     else:
-        reordered_restart_file = None
+        reordered_restart_file_df = None
         length_check = (
             "Number of lakes in the restart file is less than the routelink file"
         )

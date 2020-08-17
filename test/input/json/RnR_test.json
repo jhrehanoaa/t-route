@@ -22,6 +22,8 @@
     "initial_states_input": {
         "ql_input_folder": "/home/APD/inland_hydraulics/wrf-hydro-run/OUTPUTS",
         "ql_files_tail": "/*.CHRTOUT_DOMAIN1",
+        "initial_states_input_folder": "/home/APD/inland_hydraulics/wrf-hydro-run/OUTPUTS",
+        "initial_states_files_tail": "/*.CHRTOUT_DOMAIN1",
         "time_string": "2020-03-19_18:00_DOMAIN1",
         "channel_initial_states_file": "/home/APD/inland_hydraulics/wrf-hydro-run/restart/HYDRO_RST.",
         "initial_states_waterbody_ID_crosswalk_file": "/home/APD/inland_hydraulics/wrf-hydro-run/DOMAIN/waterbody_subset_ID_crosswalk.csv",
