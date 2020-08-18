@@ -1088,7 +1088,6 @@ def main():
         == 1
         # run_route_and_replace_test
     ):  # test 2. Take lateral flow from wrf-hydro r&r output
-        # data[supernetwork_data["bottomwidth_col"]]
         ql_input_folder = supernetwork_data["initial_states_input"].get(
             "ql_input_folder", None
         )
@@ -1113,17 +1112,11 @@ def main():
         if initial_states_files_tail == None:
             initial_states_files_tail == args.initial_states_files_tail
 
-        # ql_files_tail = supernetwork_data["initial_states_input"]["ql_files_tail"]
         ql_files = glob.glob(ql_input_folder + ql_files_tail)
 
-        # initial_states_files_tail = supernetwork_data["initial_states_input"][
-        #     "initial_states_files_tail"
-        # ]
         initial_states_files = glob.glob(
             initial_states_input_folder + initial_states_files_tail
         )
-
-        # routelink_subset = supernetwork_data["initial_states_input"]["routelink_subset"]
 
         routelink_subset = supernetwork_data["initial_states_input"].get(
             "routelink_subset", None
@@ -1152,9 +1145,6 @@ def main():
 
         waterbody_intial_states_file = channel_initial_states_file
 
-        # initial_states_waterbody_ID_crosswalk_file = supernetwork_data[
-        #     "initial_states_input"
-        # ]["initial_states_waterbody_ID_crosswalk_file"]
         initial_states_waterbody_ID_crosswalk_file = supernetwork_data[
             "initial_states_input"
         ].get("initial_states_waterbody_ID_crosswalk_file", None)
@@ -1190,7 +1180,6 @@ def main():
     for index, row in ql_df.iterrows():
         qlateral[index]["qlatval"] = row.tolist()
 
-    ######################
     if break_network_at_waterbodies:
 
         waterbodies_values = supernetwork_values[12]
