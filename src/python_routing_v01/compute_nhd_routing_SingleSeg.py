@@ -169,6 +169,49 @@ def _handle_args():
         dest="initial_states_input_folder",
         default="/home/APD/inland_hydraulics/wrf-hydro-run/OUTPUTS",
     )
+    parser.add_argument(
+        "--ql_files_tail",
+        help="Select a ql files tail",
+        dest="ql_files_tail",
+        default="/*.CHRTOUT_DOMAIN1",
+    )
+    parser.add_argument(
+        "--initial_states_files_tail",
+        help="Select a initial states files tail",
+        dest="initial_states_files_tail",
+        default="/*.CHRTOUT_DOMAIN1",
+    )
+    parser.add_argument(
+        "--routelink_subset",
+        help="Select a routelink subset",
+        dest="routelink_subset",
+        default="/home/APD/inland_hydraulics/wrf-hydro-run/DOMAIN/routeLink_subset.nc",
+    )
+    parser.add_argument(
+        "--level_pool_waterbody_parameter_file_path",
+        help="Select a level pool waterbody parameter file path",
+        dest="level_pool_waterbody_parameter_file_path",
+        default="/home/APD/inland_hydraulics/wrf-hydro-run/DOMAIN/LAKEPARM.nc",
+    )
+    parser.add_argument(
+        "--time_string",
+        help="Select a time string",
+        dest="time_string",
+        default="2020-03-19_18:00_DOMAIN1",
+    )
+    parser.add_argument(
+        "--channel_initial_states_file",
+        help="Select a channel initial states file",
+        dest="channel_initial_states_file",
+        default="/home/APD/inland_hydraulics/wrf-hydro-run/restart/HYDRO_RST.",
+    )
+    parser.add_argument(
+        "--initial_states_waterbody_ID_crosswalk_file",
+        help="Select a initial states waterbody ID crosswalk file",
+        dest="initial_states_waterbody_ID_crosswalk_file",
+        default="/home/APD/inland_hydraulics/wrf-hydro-run/DOMAIN/waterbody_subset_ID_crosswalk.csv",
+    )
+
     return parser.parse_args()
 
     if args.supernetwork == "custom" and not args.customnetworkfile:
@@ -1058,33 +1101,65 @@ def main():
         if initial_states_input_folder == None:
             initial_states_input_folder == args.initial_states_input_folder
 
-        ql_files_tail = supernetwork_data["initial_states_input"]["ql_files_tail"]
+        ql_files_tail = supernetwork_data["initial_states_input"].get(
+            "ql_files_tail", None
+        )
+        if ql_files_tail == None:
+            ql_files_tail == args.ql_files_tail
+
+        initial_states_files_tail = supernetwork_data["initial_states_input"].get(
+            "initial_states_files_tail", None
+        )
+        if initial_states_files_tail == None:
+            initial_states_files_tail == args.initial_states_files_tail
+
+        # ql_files_tail = supernetwork_data["initial_states_input"]["ql_files_tail"]
         ql_files = glob.glob(ql_input_folder + ql_files_tail)
 
-        initial_states_files_tail = supernetwork_data["initial_states_input"][
-            "initial_states_files_tail"
-        ]
+        # initial_states_files_tail = supernetwork_data["initial_states_input"][
+        #     "initial_states_files_tail"
+        # ]
         initial_states_files = glob.glob(
             initial_states_input_folder + initial_states_files_tail
         )
 
-        routelink_subset = supernetwork_data["initial_states_input"]["routelink_subset"]
+        # routelink_subset = supernetwork_data["initial_states_input"]["routelink_subset"]
+
+        routelink_subset = supernetwork_data["initial_states_input"].get(
+            "routelink_subset", None
+        )
+        if routelink_subset == None:
+            routelink_subset == args.routelink_subset
+
         level_pool_waterbody_parameter_file_path = supernetwork_data[
             "waterbody_parameters"
-        ]["level_pool_waterbody_parameter_file_path"]
-        # build a time string to specify input date
-        time_string = supernetwork_data["initial_states_input"]["time_string"]
+        ].get("level_pool_waterbody_parameter_file_path", None)
+        if level_pool_waterbody_parameter_file_path == None:
+            level_pool_waterbody_parameter_file_path == args.level_pool_waterbody_parameter_file_path
 
-        channel_initial_states_file = (
-            supernetwork_data["initial_states_input"]["channel_initial_states_file"]
-            + time_string
+        time_string = supernetwork_data["initial_states_input"].get("time_string", None)
+        if time_string == None:
+            time_string == args.time_string
+
+        channel_initial_states_file = supernetwork_data["initial_states_input"].get(
+            "channel_initial_states_file", None
         )
+        channel_initial_states_file = channel_initial_states_file + time_string
+        if channel_initial_states_file == None:
+            channel_initial_states_file == args.channel_initial_states_file
+
         initial_states_channel_ID_crosswalk_file = initial_states_files[0]
 
         waterbody_intial_states_file = channel_initial_states_file
+
+        # initial_states_waterbody_ID_crosswalk_file = supernetwork_data[
+        #     "initial_states_input"
+        # ]["initial_states_waterbody_ID_crosswalk_file"]
         initial_states_waterbody_ID_crosswalk_file = supernetwork_data[
             "initial_states_input"
-        ]["initial_states_waterbody_ID_crosswalk_file"]
+        ].get("initial_states_waterbody_ID_crosswalk_file", None)
+        if initial_states_waterbody_ID_crosswalk_file == None:
+            initial_states_waterbody_ID_crosswalk_file == args.initial_states_waterbody_ID_crosswalk_file
 
         ql_df = nnu.get_ql_from_wrf_hydro(ql_files)
 
