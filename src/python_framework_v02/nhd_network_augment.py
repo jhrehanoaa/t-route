@@ -40,7 +40,7 @@ def build_reaches(rconn):
         path_func = partial(nhd_network.split_at_junction, net)
         subreaches[tw] = nhd_network.dfs_decomposition(net, path_func)
         
-    return subreachable, subreaches
+    return subreachable, subreaches, subnets
 
 def headwater_connections(data, network_data):
 
