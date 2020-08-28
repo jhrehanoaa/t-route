@@ -254,7 +254,7 @@ def in_wsl() -> bool:
     WSL is thought to be the only common Linux kernel with Microsoft in the name.
     """
 
-    return "Microsoft" in os.uname().release
+    return "microsoft" in (os.uname().release).lower()
 
 
 if COMPILE:
@@ -597,7 +597,7 @@ def compute_mc_reach_up2down(
         # storage
         volumec = dt * (quc - qdc + qlat)
         # TODO: This qlatCum is invalid as a cumulative value unless time is factored in
-        qlatCum = qlat
+            qlatCum = qlat * dt
         if ts > 0:
             volumec = volumec + flowveldepth[current_segment]["storageval"][ts - 1]
             qlatCum = qlatCum + flowveldepth[current_segment]["qlatCumval"][ts - 1]
