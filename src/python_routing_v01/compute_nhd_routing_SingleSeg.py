@@ -1596,7 +1596,9 @@ def main():
     qlateral = {}
 
     if qlat_input_folder:
-        qlat_files = glob.glob(qlat_input_folder + qlat_file_pattern_filter)
+        qlat_files = []
+        for pattern in qlat_file_pattern_filter:
+            qlat_files.extend(glob.glob(qlat_input_folder + pattern))
         qlat_df = nio.get_ql_from_wrf_hydro(
             qlat_files=qlat_files,
             index_col=qlat_file_index_col,
