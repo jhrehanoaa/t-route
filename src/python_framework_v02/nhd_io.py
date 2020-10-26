@@ -40,12 +40,23 @@ def read_mask(path, layer_string=None):
 
 
 def read_custom_input(custom_input_file):
-    if custom_input_file[-4:] == "yaml":
-        with open(custom_input_file) as custom_file:
-            data = yaml.load(custom_file)
-    else:
+    valid_yaml = True
+    valid_json = True
+    try:
         with open(custom_input_file) as custom_file:
             data = json.load(custom_file)
+    except:
+        valid_json = False
+    
+    try:
+        with open(custom_input_file) as custom_file:
+            data = yaml.load(custom_file)
+    except:
+        valid_yaml = False
+    
+    if not (valid_json or valid_yaml):
+        print("SOMETHING BROKE")
+        
     supernetwork_parameters = data.get("supernetwork_parameters", None)
     waterbody_parameters = data.get("waterbody_parameters", {})
     forcing_parameters = data.get("forcing_parameters", {})
