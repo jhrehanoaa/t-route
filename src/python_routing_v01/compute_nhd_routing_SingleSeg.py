@@ -489,7 +489,8 @@ def compute_network(
             pathToOutputFile=writeToNETCDF,
         )
 
-    return {terminal_segment: flowveldepth[terminal_segment]}
+    #return {terminal_segment: flowveldepth[terminal_segment]}
+    return flowveldepth
 
 
 # TODO: generalize with a direction flag
@@ -1743,7 +1744,6 @@ def main():
             if showtiming:
                 print("... complete in %s seconds." % (time.time() - start_time))
             if percentage_complete:
-                # import pdb; pdb.set_trace()
                 pbar.update(
                     sum(
                         len(network[1]["all_segments"])
@@ -1751,6 +1751,15 @@ def main():
                     )
                 )
                 # print(f"{[network[0] for network in ordered_networks[nsq]]}")
+
+        max_courant = 0
+        maxa = []
+        for result in results:
+            for seg in result:
+                maxa.extend(result[seg][:,8:9])
+        max_courant = max(maxa)
+        print(f"max_courant: {max_courant}")
+
         if (
             nsq > 0
         ):  # We skip this step for zero-order networks, i.e., those that have no downstream dependents
