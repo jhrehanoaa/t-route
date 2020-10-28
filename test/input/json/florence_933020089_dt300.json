@@ -7,9 +7,9 @@
         "debuglevel": -2,
         "break_network_at_waterbodies": true,
         "assume_short_ts": true,
-        "qts_subdivisions": 60,
-        "dt": 60,
-        "nts": 10080,
+        "qts_subdivisions": 12,
+        "dt": 300,
+        "nts": 3600,
         "cpu-pool": 4
     },
     "output_parameters":
