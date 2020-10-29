@@ -9,6 +9,10 @@ run_parameters:
   qts_subdivisions: 60
   dt: 60
   nts: 10080
+  #qts, dt, and nts relationship.
+  #qts 12*n
+  #dt 300/n
+  #nts 3600*n
   cpu-pool: 4
 output_parameters:
   csv_output:
