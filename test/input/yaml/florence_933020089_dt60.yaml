@@ -8,7 +8,7 @@ run_parameters:
   assume_short_ts: true
   qts_subdivisions: 60
   dt: 60
-  nts: 10080
+  nts: 18000
   #qts, dt, and nts relationship.
   #qts 12*n
   #dt 300/n
