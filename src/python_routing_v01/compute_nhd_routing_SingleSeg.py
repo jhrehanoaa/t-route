@@ -1,4 +1,4 @@
-# command line args and usage with: python compute_nhd_routing_SingleSeg.py --help
+# command line cli_args and usage with: python compute_nhd_routing_SingleSeg.py --help
 # example to run test: python compute_nhd_routing_SingleSeg.py -v --test
 # example usage: python compute_nhd_routing_SingleSeg.py -v -t -w -onc -n Mainstems_CONUS
 #                python compute_nhd_routing_SingleSeg.py -n Mainstems_CONUS --nts 1440 --parallel &
@@ -310,12 +310,12 @@ if COMPILE:
 else:
     from mc_sseg_stime import muskingcunge_module as mc
 
-connections = None
-networks = None
-qlateral = None
-waterbodies_df = None
-waterbody_initial_states_df = None
-channel_initial_states_df = None
+connections_g = None
+networks_g = None
+qlateral_g = None
+waterbodies_df_g = None
+waterbody_initial_states_df_g = None
+channel_initial_states_df_g = None
 
 time_index = 0  # time
 flowval_index = 1  # flowval
@@ -324,9 +324,9 @@ depthval_index = 3  # depthval
 qlatval_index = 4  # qlatval
 storageval_index = 5  # storageval
 qlatCumval_index = 6  # qlatCumval
-kinCelerity_index = 7 # ck
-courant_index = 8 # cn
-X_index = 9 # X
+kinCelerity_index = 7  # ck
+courant_index = 8  # cn
+X_index = 9  # X
 
 ## network and reach utilities
 import nhd_network_utilities_v01 as nnu
@@ -378,11 +378,11 @@ def compute_network(
     nc_output_folder=None,
     assume_short_ts=False,
 ):
-    global connections
-    global networks
-    global qlateral
+    global connections_g
+    global networks_g
+    global qlateral_g
 
-    network = networks[terminal_segment]
+    network = networks_g[terminal_segment]
     flowveldepth = {
         connection: np.zeros(np.array([nts, 10]))
         for connection in (network["all_segments"])
@@ -430,7 +430,7 @@ def compute_network(
                 if waterbody:
                     compute_level_pool_reach_up2down(
                         flowveldepth=flowveldepth,
-                        qlateral=qlateral,
+                        qlateral=qlateral_g,
                         qup_reach=qup_reach,
                         quc_reach=quc_reach,
                         head_segment=head_segment,
@@ -450,7 +450,7 @@ def compute_network(
                 else:
                     compute_mc_reach_up2down(
                         flowveldepth=flowveldepth,
-                        qlateral=qlateral,
+                        qlateral=qlateral_g,
                         qup_reach=qup_reach,
                         quc_reach=quc_reach,
                         head_segment=head_segment,
@@ -468,7 +468,7 @@ def compute_network(
         for x in range(network["maximum_reach_seqorder"], -1, -1):
             for head_segment, reach in ordered_reaches[x]:
                 writeArraytoCSV(
-                    connections=connections,
+                    connections=connections_g,
                     flowveldepth=flowveldepth,
                     reach=reach,
                     verbose=verbose,
@@ -478,7 +478,7 @@ def compute_network(
 
     if writeToNETCDF:
         writeArraytoNC(
-            connections=connections,
+            connections=connections_g,
             flowveldepth=flowveldepth,
             network=network,
             nts=nts,
@@ -489,7 +489,7 @@ def compute_network(
             pathToOutputFile=writeToNETCDF,
         )
 
-    #return {terminal_segment: flowveldepth[terminal_segment]}
+    # return {terminal_segment: flowveldepth[terminal_segment]}
     return flowveldepth
 
 
@@ -508,8 +508,8 @@ def compute_reach_upstream_flows(
     debuglevel=0,
     assume_short_ts=False,
 ):
-    global connections
-    global channel_initial_states_df
+    global connections_g
+    global channel_initial_states_df_g
 
     # upstream flow per reach
     qup = 0.0
@@ -518,7 +518,7 @@ def compute_reach_upstream_flows(
     if waterbody:
         upstreams_list = set()
         for rr in network["receiving_reaches"]:
-            for us in connections[rr]["upstreams"]:
+            for us in connections_g[rr]["upstreams"]:
                 upstreams_list.add(us)
         # this step was critical -- there were receiving reaches that were junctions
         # with only one of their upstreams out of the network. The other was inside
@@ -528,12 +528,12 @@ def compute_reach_upstream_flows(
 
     elif head_segment in network["receiving_reaches"]:
         # TODO: confirm this logic, to make sure we don't double count the head
-        upstreams_list = connections[reach["reach_head"]]["upstreams"]
+        upstreams_list = connections_g[reach["reach_head"]]["upstreams"]
         us_flowveldepth = flowveldepth
         us_flowveldepth.update(flowveldepth_connect)
 
     else:
-        upstreams_list = connections[reach["reach_head"]]["upstreams"]
+        upstreams_list = connections_g[reach["reach_head"]]["upstreams"]
         us_flowveldepth = flowveldepth
 
     for us in upstreams_list:
@@ -542,7 +542,7 @@ def compute_reach_upstream_flows(
 
             if ts == 0:
                 # Initialize qup from warm state array
-                qup += channel_initial_states_df.loc[us, "qd0"]
+                qup += channel_initial_states_df_g.loc[us, "qd0"]
             else:
                 qup += us_flowveldepth[us][ts - 1][flowval_index]
 
@@ -568,7 +568,7 @@ def compute_mc_reach_up2down(
     debuglevel=0,
     assume_short_ts=False,
 ):
-    global connections
+    global connections_g
 
     if debuglevel <= -2:
         print(
@@ -582,7 +582,7 @@ def compute_mc_reach_up2down(
     # next_segment = connections[current_segment]["downstream"]
 
     while True:
-        data = connections[current_segment]["data"]
+        data = connections_g[current_segment]["data"]
         # for now treating as constant per reach
         bw = data[supernetwork_parameters["bottomwidth_col"]]
         tw = data[supernetwork_parameters["topwidth_col"]]
@@ -600,9 +600,9 @@ def compute_mc_reach_up2down(
 
         if ts == 0:
             # initialize from initial states
-            qdp = channel_initial_states_df.loc[current_segment, "qd0"]
+            qdp = channel_initial_states_df_g.loc[current_segment, "qd0"]
             velp = 0
-            depthp = channel_initial_states_df.loc[current_segment, "h0"]
+            depthp = channel_initial_states_df_g.loc[current_segment, "h0"]
         else:
             qdp = flowveldepth[current_segment][ts - 1][flowval_index]
             velp = 0  # flowveldepth[current_segment]["velval"][-1]
@@ -693,11 +693,11 @@ def compute_mc_reach_up2down(
             volumec,
             qlatCum,
             ck,
-            cn, 
+            cn,
             X,
         ]
 
-        next_segment = connections[current_segment]["downstream"]
+        next_segment = connections_g[current_segment]["downstream"]
         if current_segment == reach["reach_tail"]:
             if debuglevel <= -2:
                 print(f"{current_segment} (tail)")
@@ -729,9 +729,9 @@ def compute_level_pool_reach_up2down(
     debuglevel=0,
     assume_short_ts=False,
 ):
-    global connections
-    global waterbodies_df
-    global waterbody_initial_states_df
+    global connections_g
+    global waterbodies_df_g
+    global waterbody_initial_states_df_g
 
     if debuglevel <= -2:
         print(
@@ -744,7 +744,7 @@ def compute_level_pool_reach_up2down(
     current_segment = reach["reach_tail"]
     if ts == 0:
         # Initialize from warm state
-        depthp = waterbody_initial_states_df.loc[waterbody, "h0"]
+        depthp = waterbody_initial_states_df_g.loc[waterbody, "h0"]
     else:
         depthp = flowveldepth[current_segment][ts - 1][depthval_index]
 
@@ -760,20 +760,22 @@ def compute_level_pool_reach_up2down(
     qi1 = quc
     ql = qlat
     dt = dt  # current timestep length
-    ar = waterbodies_df.loc[waterbody, wb_params["level_pool_waterbody_area"]]
-    we = waterbodies_df.loc[waterbody, wb_params["level_pool_weir_elevation"]]
-    maxh = waterbodies_df.loc[
+    ar = waterbodies_df_g.loc[waterbody, wb_params["level_pool_waterbody_area"]]
+    we = waterbodies_df_g.loc[waterbody, wb_params["level_pool_weir_elevation"]]
+    maxh = waterbodies_df_g.loc[
         waterbody, wb_params["level_pool_waterbody_max_elevation"]
     ]
-    wc = waterbodies_df.loc[waterbody, wb_params["level_pool_outfall_weir_coefficient"]]
-    wl = waterbodies_df.loc[waterbody, wb_params["level_pool_outfall_weir_length"]]
+    wc = waterbodies_df_g.loc[
+        waterbody, wb_params["level_pool_outfall_weir_coefficient"]
+    ]
+    wl = waterbodies_df_g.loc[waterbody, wb_params["level_pool_outfall_weir_length"]]
     # TODO: find the right value for this variable -- it should be in the parameter file!
     dl = (
         10 * wl
     )  # waterbodies_df.loc[waterbody, wb_params["level_pool_overall_dam_length"]]
-    oe = waterbodies_df.loc[waterbody, wb_params["level_pool_orifice_elevation"]]
-    oc = waterbodies_df.loc[waterbody, wb_params["level_pool_orifice_coefficient"]]
-    oa = waterbodies_df.loc[waterbody, wb_params["level_pool_orifice_area"]]
+    oe = waterbodies_df_g.loc[waterbody, wb_params["level_pool_orifice_elevation"]]
+    oc = waterbodies_df_g.loc[waterbody, wb_params["level_pool_orifice_coefficient"]]
+    oa = waterbodies_df_g.loc[waterbody, wb_params["level_pool_orifice_area"]]
 
     qdc, depthc = rc.levelpool_physics(
         dt, qi0, qi1, ql, ar, we, maxh, wc, wl, dl, oe, oc, oa, depthp
@@ -787,8 +789,8 @@ def compute_level_pool_reach_up2down(
         volumec = volumec + flowveldepth[current_segment][ts - 1][storageval_index]
         qlatCum = qlatCum + flowveldepth[current_segment][ts - 1][qlatCumval_index]
 
-    #TODO: There may be a more useful output value to provide here.
-    #celerity values are nullified for reservoirs.
+    # TODO: There may be a more useful output value to provide here.
+    # celerity values are nullified for reservoirs.
     ck = 0
     cn = 0
     X = 0
@@ -937,7 +939,7 @@ def writeArraytoNC(
                 flowveldepth_data["xval"].append(
                     flowveldepth[current_segment][:, X_index]
                 )
-            
+
                 # write segment flowveldepth_data['segment']
                 flowveldepth_data["segment"].append(current_segment)
                 if not TIME_WRITTEN:
@@ -1056,32 +1058,31 @@ def writeNC(
     lateralCumflow.standard_name = (
         "Cummulativelateralflow"  # this is a CF standard name
     )
-    
+
     # write  kinematic celerity
     celerity = ncfile.createVariable(
         "celerity", np.float64, ("time", "stations")
     )  # note: unlimited dimension is leftmost
     celerity.units = "ft/s"  #
     celerity[:, :] = np.transpose(np.array(flowveldepth_data["ckval"], dtype=float))
-    celerity.standard_name = "celerity" 
-    
+    celerity.standard_name = "celerity"
+
     # write  courant number
     courant = ncfile.createVariable(
         "courant", np.float64, ("time", "stations")
     )  # note: unlimited dimension is leftmost
     courant.units = "-"  #
     courant[:, :] = np.transpose(np.array(flowveldepth_data["cnval"], dtype=float))
-    courant.standard_name = "courant number" 
-    
+    courant.standard_name = "courant number"
+
     # write  X parameter
     X_param = ncfile.createVariable(
         "X", np.float64, ("time", "stations")
     )  # note: unlimited dimension is leftmost
     X_param.units = "-"  #
     X_param[:, :] = np.transpose(np.array(flowveldepth_data["xval"], dtype=float))
-    X_param.standard_name = "MC X parameter" 
-    
-    
+    X_param.standard_name = "MC X parameter"
+
     # write time in seconds since  TODO get time from lateral flow from NWM
     time = ncfile.createVariable("time", np.float64, "time")
     time.units = "seconds since 2011-08-27 00:00:00"  ## TODO get time fron NWM as argument to this function
@@ -1150,18 +1151,26 @@ def sort_ordered_network(l, reverse=False):
 
 
 # Main Routine
-def main():
-    args = _handle_args()
+def route_supernetwork(
+    connections,
+    networks,
+    qlateral,
+    waterbodies_df,
+    waterbody_initial_states_df,
+    channel_initial_states_df,
+    custom_input_file=None,
+):
+    cli_args = _handle_args()
 
-    global connections
-    global networks
-    global qlateral
-    global waterbodies_df
-    global waterbody_initial_states_df
-    global channel_initial_states_df
+    global connections_g
+    global networks_g
+    global qlateral_g
+    global waterbodies_df_g
+    global waterbody_initial_states_df_g
+    global channel_initial_states_df_g
 
-    supernetwork = args.supernetwork
-    custom_input_file = args.custom_input_file
+    if not custom_input_file:
+        custom_input_file = cli_args.custom_input_file
     supernetwork_parameters = None
     waterbody_parameters = None
     if custom_input_file:
@@ -1173,7 +1182,7 @@ def main():
             output_parameters,
             run_parameters,
         ) = nio.read_custom_input(custom_input_file)
-        
+
         break_network_at_waterbodies = run_parameters.get(
             "break_network_at_waterbodies", None
         )
@@ -1243,47 +1252,50 @@ def main():
     # arise from this ordering ... check these out.
 
     else:
-        break_network_at_waterbodies = args.break_network_at_waterbodies
+        supernetwork = cli_args.supernetwork
+        break_network_at_waterbodies = cli_args.break_network_at_waterbodies
 
-        dt = int(args.dt)
-        nts = int(args.nts)
-        qts_subdivisions = args.qts_subdivisions
-        qlat_const = float(args.qlat_const)
-        qlat_input_folder = args.qlat_input_folder
-        qlat_input_file = args.qlat_input_file
-        qlat_file_pattern_filter = args.qlat_file_pattern_filter
+        dt = int(cli_args.dt)
+        nts = int(cli_args.nts)
+        qts_subdivisions = cli_args.qts_subdivisions
+        qlat_const = float(cli_args.qlat_const)
+        qlat_input_folder = cli_args.qlat_input_folder
+        qlat_input_file = cli_args.qlat_input_file
+        qlat_file_pattern_filter = cli_args.qlat_file_pattern_filter
 
-        wrf_hydro_channel_restart_file = args.wrf_hydro_channel_restart_file
-        wrf_hydro_channel_ID_crosswalk_file = args.wrf_hydro_channel_ID_crosswalk_file
+        wrf_hydro_channel_restart_file = cli_args.wrf_hydro_channel_restart_file
+        wrf_hydro_channel_ID_crosswalk_file = (
+            cli_args.wrf_hydro_channel_ID_crosswalk_file
+        )
         wrf_hydro_channel_ID_crosswalk_file_field_name = (
-            args.wrf_hydro_channel_ID_crosswalk_file_field_name
+            cli_args.wrf_hydro_channel_ID_crosswalk_file_field_name
         )
 
-        wrf_hydro_waterbody_restart_file = args.wrf_hydro_waterbody_restart_file
+        wrf_hydro_waterbody_restart_file = cli_args.wrf_hydro_waterbody_restart_file
         wrf_hydro_waterbody_ID_crosswalk_file = (
-            args.wrf_hydro_waterbody_ID_crosswalk_file
+            cli_args.wrf_hydro_waterbody_ID_crosswalk_file
         )
         wrf_hydro_waterbody_ID_crosswalk_file_field_name = (
-            args.wrf_hydro_waterbody_ID_crosswalk_file_field_name
+            cli_args.wrf_hydro_waterbody_ID_crosswalk_file_field_name
         )
 
-        debuglevel = -1 * int(args.debuglevel)
-        verbose = args.verbose
-        showtiming = args.showtiming
-        percentage_complete = args.percentage_complete
-        do_network_analysis_only = args.do_network_analysis_only
-        if args.csv_output_folder:
-            csv_output = {"csv_output_folder": args.csv_output_folder}
+        debuglevel = -1 * int(cli_args.debuglevel)
+        verbose = cli_args.verbose
+        showtiming = cli_args.showtiming
+        percentage_complete = cli_args.percentage_complete
+        do_network_analysis_only = cli_args.do_network_analysis_only
+        if cli_args.csv_output_folder:
+            csv_output = {"csv_output_folder": cli_args.csv_output_folder}
         else:
             csv_output = None
-        nc_output_folder = args.nc_output_folder
-        assume_short_ts = args.assume_short_ts
-        parallel_compute = args.parallel_compute
-        sort_networks = args.sort_networks
-        cpu_pool = args.cpu_pool
+        nc_output_folder = cli_args.nc_output_folder
+        assume_short_ts = cli_args.assume_short_ts
+        parallel_compute = cli_args.parallel_compute
+        sort_networks = cli_args.sort_networks
+        cpu_pool = cli_args.cpu_pool
 
-    run_pocono2_test = args.run_pocono2_test
-    run_pocono1_test = args.run_pocono1_test
+    run_pocono2_test = cli_args.run_pocono2_test
+    run_pocono1_test = cli_args.run_pocono1_test
 
     if run_pocono2_test:
         if verbose:
@@ -1639,7 +1651,7 @@ def main():
             print("... in %s seconds." % (time.time() - start_time))
             start_time = time.time()
 
-    # Define them pool after we create the static global objects (and collect the garbage)
+    # Define the pool after we create the static global objects (and collect the garbage)
     if parallel_compute:
         import gc
 
@@ -1655,6 +1667,15 @@ def main():
         main_start_time = time.time()
     if verbose:
         print(f"executing routing computation ...")
+
+    compute_network_func = compute_network
+
+    connections_g = connections
+    networks_g = networks
+    qlateral_g = qlateral
+    waterbodies_df_g = waterbodies_df
+    waterbody_initial_states_df_g = waterbody_initial_states_df
+    channel_initial_states_df_g = channel_initial_states_df
 
     progress_count = 0
     if percentage_complete:
@@ -1690,7 +1711,7 @@ def main():
                     )
 
                 results.append(
-                    compute_network(
+                    compute_network_func(
                         flowveldepth_connect=flowveldepth_connect,
                         terminal_segment=terminal_segment,
                         supernetwork_parameters=supernetwork_parameters,
@@ -1739,7 +1760,7 @@ def main():
                 print(f"{[network[0] for network in ordered_networks[nsq]]}")
             # with pool:
             # with multiprocessing.Pool() as pool:
-            results = pool.starmap(compute_network, nslist)
+            results = pool.starmap(compute_network_func, nslist)
 
             if showtiming:
                 print("... complete in %s seconds." % (time.time() - start_time))
@@ -1756,7 +1777,7 @@ def main():
         maxa = []
         for result in results:
             for seg in result:
-                maxa.extend(result[seg][:,8:9])
+                maxa.extend(result[seg][:, 8:9])
         max_courant = max(maxa)
         print(f"max_courant: {max_courant}")
 
@@ -1789,6 +1810,18 @@ def main():
     if showtiming:
         print("... in %s seconds." % (time.time() - program_start_time))
 
+    all_results = {}
+    for result in results:
+        all_results.update(result)
+    return all_results
+
 
 if __name__ == "__main__":
-    main()
+    route_supernetwork(
+        connections=connections_g,
+        networks=networks_g,
+        qlateral=qlateral_g,
+        waterbodies_df=waterbodies_df_g,
+        waterbody_initial_states_df=waterbody_initial_states_df_g,
+        channel_initial_states_df=channel_initial_states_df_g,
+    )
