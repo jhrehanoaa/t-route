@@ -82,7 +82,8 @@ waterbody_parameters:
 #WRF-Hydro output file 
 forcing_parameters:
     qlat_input_folder: "../../test/input/geo/NWM_2.1_Sample_Datasets/Pocono_TEST1/example_CHRTOUT/"
-    qlat_file_pattern_filter: "/*.CHRTOUT_DOMAIN1"
+    qlat_file_pattern_filter: 
+    - "/*.CHRTOUT_DOMAIN1"
     qlat_file_index_col: feature_id
     qlat_file_value_col: q_lateral
 #WRF-Hydro restart files

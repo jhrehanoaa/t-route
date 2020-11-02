@@ -8,7 +8,7 @@ run_parameters:
   assume_short_ts: true
   qts_subdivisions: 360
   dt: 10
-  nts: 108000
+  nts: 60480
   #qts, dt, and nts relationship.
   #qts 12*n
   #dt 300/n
@@ -19,7 +19,6 @@ output_parameters:
     csv_output_folder: "../../test/output/text"
     csv_output_segments:
     - 933020089
-  nc_output_folder: "../../test/output/text"
 supernetwork_parameters:
   title_string: Hurricante Florence cutout
   geo_file_path: "../../test/input/private/florence_cutout_v21/NWM/DOMAIN/Route_Link.nc"

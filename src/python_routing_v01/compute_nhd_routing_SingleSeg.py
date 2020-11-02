@@ -1651,6 +1651,15 @@ def route_supernetwork(
             print("... in %s seconds." % (time.time() - start_time))
             start_time = time.time()
 
+    compute_network_func = compute_network
+
+    connections_g = connections
+    networks_g = networks
+    qlateral_g = qlateral
+    waterbodies_df_g = waterbodies_df
+    waterbody_initial_states_df_g = waterbody_initial_states_df
+    channel_initial_states_df_g = channel_initial_states_df
+
     # Define the pool after we create the static global objects (and collect the garbage)
     if parallel_compute:
         import gc
@@ -1667,15 +1676,6 @@ def route_supernetwork(
         main_start_time = time.time()
     if verbose:
         print(f"executing routing computation ...")
-
-    compute_network_func = compute_network
-
-    connections_g = connections
-    networks_g = networks
-    qlateral_g = qlateral
-    waterbodies_df_g = waterbodies_df
-    waterbody_initial_states_df_g = waterbody_initial_states_df
-    channel_initial_states_df_g = channel_initial_states_df
 
     progress_count = 0
     if percentage_complete:
