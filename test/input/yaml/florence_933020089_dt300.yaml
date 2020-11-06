@@ -8,7 +8,7 @@ run_parameters:
   assume_short_ts: true
   qts_subdivisions: 12
   dt: 300
-  nts: 2016
+  nts: 2880
   #qts, dt, and nts relationship.
   #qts 12*n
   #dt 300/n
@@ -75,14 +75,14 @@ waterbody_parameters:
 forcing_parameters:
   qlat_input_folder: "../../test/input/private/florence_cutout_v21/FORCING_AnA_channel-only/"
   qlat_file_pattern_filter:
-  - "/2018091[456789]*.CHRTOUT_DOMAIN1"
+  - "/2018091[123456789]*.CHRTOUT_DOMAIN1"
   - "/2018092*.CHRTOUT_DOMAIN1"
   qlat_file_index_col: feature_id
   qlat_file_value_col: q_lateral
 #WRF-Hydro restart files
 restart_parameters:
     #WRF-Hydro channels restart file
-  wrf_hydro_channel_restart_file: "../../test/input/private/florence_cutout_v21/NWM/RESTART_open-loop/HYDRO_RST.2018-09-14_00:00_DOMAIN1"
+  wrf_hydro_channel_restart_file: "../../test/input/private/florence_cutout_v21/NWM/RESTART_open-loop/HYDRO_RST.2018-09-11_00:00_DOMAIN1"
   #WRF-Hydro channels ID crosswalk file
   wrf_hydro_channel_ID_crosswalk_file: "../../test/input/private/florence_cutout_v21/NWM/DOMAIN/Route_Link.nc"
   wrf_hydro_channel_ID_crosswalk_file_field_name: link
@@ -90,7 +90,7 @@ restart_parameters:
   wrf_hydro_channel_restart_downstream_flow_field_name: qlink2
   wrf_hydro_channel_restart_depth_flow_field_name: hlink
   #WRF-Hydro waterbodies restart file
-  wrf_hydro_waterbody_restart_file: "../../test/input/private/florence_cutout_v21/NWM/RESTART_open-loop/HYDRO_RST.2018-09-14_00:00_DOMAIN1"
+  wrf_hydro_waterbody_restart_file: "../../test/input/private/florence_cutout_v21/NWM/RESTART_open-loop/HYDRO_RST.2018-09-11_00:00_DOMAIN1"
   #WRF-Hydro waterbody ID crosswalk file
   wrf_hydro_waterbody_ID_crosswalk_file: "../../test/input/private/florence_cutout_v21/NWM/DOMAIN/LAKEPARM.nc"
   wrf_hydro_waterbody_ID_crosswalk_file_field_name: lake_id
