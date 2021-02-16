@@ -11,6 +11,7 @@ run_parameters:
     dt: 300
     nts: 8640
     cpu-pool: 12
+    return_courant: true
     #Use the parallel computation engine (omit flag for serial computation)
     #Verbose output (leave blank for quiet output)
     #Set the showtiming (omit flag for no timing information)
@@ -72,7 +73,7 @@ waterbody_parameters:
         level_pool_orifice_area: OrificeA
 #WRF-Hydro output file 
 forcing_parameters:
-    qlat_input_file: "../../test/input/florence_933020089/OUTPUT/SeptemberFlorenceQlateral.csv"
+    qlat_input_file: "../../test/input/florence_933020089/FORCING/SeptemberFlorenceQlateral.csv"
     #qlat_input_folder: "../../test/input/florence_933020089/Full_Model_Run/OUTPUT/"
     #qlat_file_pattern_filter: "/201809*.CHRTOUT_DOMAIN1"
     #qlat_file_index_col: feature_id

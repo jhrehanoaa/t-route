@@ -830,6 +830,7 @@ def main():
         print("... in %s seconds." % (time.time() - start_time))
 
     ################### Main Execution Loop across ordered networks
+    print(run_parameters["return_courant"])
     if showtiming:
         main_start_time = time.time()
     if verbose and run_parameters["return_courant"]:
@@ -861,7 +862,7 @@ def main():
         run_parameters.get("assume_short_ts", False),
         run_parameters.get("return_courant", False),
     )
-
+    
     if output_parameters["csv_output"]:
         csv_output_folder = output_parameters["csv_output"].get("csv_output_folder", None)
         
