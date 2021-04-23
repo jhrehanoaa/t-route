@@ -710,6 +710,8 @@ def compute_nhd_routing_v02(
                     usgs_df_sub.drop(
                         usgs_df_sub.columns[range(0, 1)], axis=1, inplace=True
                     )
+                    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+                    import pdb; pdb.set_trace()
                 else:
                     usgs_df_sub = pd.DataFrame()
                     nudging_positions_list = []
@@ -1166,7 +1168,7 @@ def main():
             print("creating usgs time_slice data array ...")
 
         usgs_df = nnu.build_data_assimilation(data_assimilation_parameters)
-
+        
         if verbose:
             print("usgs array complete")
         if showtiming:
