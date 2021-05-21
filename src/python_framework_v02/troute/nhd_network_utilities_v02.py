@@ -553,9 +553,9 @@ def build_qlateral_array(
         )
 
     # TODO: Make a more sophisticated date-based filter
-    max_col = 1 + nts // qts_subdivisions
-    if len(qlat_df.columns) > max_col:
-        qlat_df.drop(qlat_df.columns[max_col:], axis=1, inplace=True)
+    # max_col = 1 + nts // qts_subdivisions
+    # if len(qlat_df.columns) > max_col:
+        # qlat_df.drop(qlat_df.columns[max_col:], axis=1, inplace=True)
 
     mask_file_path = supernetwork_parameters.get("mask_file_path", None)
     if mask_file_path:
