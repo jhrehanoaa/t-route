@@ -1,14 +1,14 @@
 ---
 #initial input parameters
 run_parameters:
-    # parallel_compute_method: by-network  # OPTIONS: <omit flag for serial execution>, "by-network", "by-subnetwork-jit", "by-subnetwork-jit-clustered"
+    # parallel_compute_method: by-subnetwork-jit  # OPTIONS: <omit flag for serial execution>, "by-network", "by-subnetwork-jit", "by-subnetwork-jit-clustered"
     # subnetwork_target_size: 100  # by-subnetwork* requires a value here to identify the target subnetwork size.
     verbose: true  # verbose output (leave blank for quiet output.)
     showtiming: true  # set the showtiming (omit flag for no timing information.)
     debuglevel: 1  # set the debuglevel for additional console output.
     # break_network_at_waterbodies: true # replace waterbodies in the route-link dataset with segments representing the reservoir and calculate to divide the computation (leave blank for no splitting.)
                           # WARNING: `break_network_at_waterbodies: true` will only work if compute_method is set to "V02-structured-obj" and parallel_compute_method is unset (serial execution) or set to "by-network".
-    # compute_method: V02-structured-obj  # OPTIONS: "V02-caching", "V02-structured-obj", "V02-structured"
+    compute_method: V02-structured-obj  # OPTIONS: "V02-caching", "V02-structured-obj", "V02-structured"
     assume_short_ts: true  # use the previous timestep value for both current and previous flow.
     qts_subdivisions: 12  # number of timesteps per forcing (qlateral) timestep.
     dt: 300  # default timestep length, seconds
@@ -102,21 +102,21 @@ restart_parameters:
     # wrf_hydro_waterbody_crosswalk_filter_file_field_name: NHDWaterbodyComID
     # florence_testcase/florenceNudgingChannelOnly/nudgingLastObs
     wrf_hydro_last_obs_file: "../../notebooks/chrtoutfiles/nudgingLastObs.2018-12-01_00:00:00.nc"
-    wrf_last_obs_flag: True
+    wrf_last_obs_flag: False
 parity_parameters:
     # florence_testcase/florenceNudgingChannelOnly/CHRTOUT
     parity_check_input_folder: "../../notebooks/chrtoutfiles/chrtout/"
     parity_check_file_pattern_filter: "*.CHRTOUT_DOMAIN1"
     parity_check_file_index_col: feature_id
     parity_check_file_value_col: streamflow
-    parity_check_compare_node: 2102000
-coastal_parameters:
-    coastal_boundary_elev_data: "../../test/input/geo/coastal_inputs/staout_1"
+    parity_check_compare_node: 8872372
+# coastal_parameters:
+#     coastal_boundary_elev_data: "../../test/input/geo/coastal_inputs/staout_1"
     # coastal_ncdf: "../../test/input/geo/coastal_inputs/SandySample.nc"
-data_assimilation_parameters:
-    # florence_testcase/florence_933020089/DOMAIN
-    data_assimilation_parameters_file: "../../test/input/florence_933020089/DOMAIN/Route_Link.nc"
-    data_assimilation_filter: "*.usgsTimeSlice.ncdf"
-    # data_assimilation_csv: "../../test/input/geo/usgs_files/usgs_files.csv"
-    # florence_testcase/florenceNudgingChannelOnly/FORCING_AnA_channel-only/24timeslices
-    data_assimilation_timeslices_folder: "/home/jacob.hreha/github/fresh_start/t-route/notebooks/chrtoutfiles/FORCING_AnA_channel-only/24timeslices/"
+# data_assimilation_parameters:
+#     # florence_testcase/florence_933020089/DOMAIN
+#     data_assimilation_parameters_file: "../../test/input/florence_933020089/DOMAIN/Route_Link.nc"
+#     data_assimilation_filter: "*.usgsTimeSlice.ncdf"
+#     # data_assimilation_csv: "../../test/input/geo/usgs_files/usgs_files.csv"
+#     # florence_testcase/florenceNudgingChannelOnly/FORCING_AnA_channel-only/24timeslices
+#     data_assimilation_timeslices_folder: "/home/jacob.hreha/github/fresh_start/t-route/notebooks/chrtoutfiles/FORCING_AnA_channel-only/24timeslices/"

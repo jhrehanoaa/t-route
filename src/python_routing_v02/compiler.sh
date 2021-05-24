@@ -6,8 +6,8 @@ REPOROOT=`pwd`
 #For each build step, you can set these to true to make it build
 #or set it to anything else (or unset) to skip that step
 build_mc_kernel=true
-build_diffusive_kernel=true
-build_reservoir_kernel=true
+build_diffusive_kernel=false
+build_reservoir_kernel=false
 build_framework=true
 build_routing=true
 

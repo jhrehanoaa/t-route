@@ -858,11 +858,9 @@ def compute_nhd_routing_v02(
             # print(lastobs_segs)
             # print(nudging_positions_list)
             # print(last_obs_sub)
-            if not last_obs_sub.empty:
-                print(usgs_df)
-                import pdb
-
-                pdb.set_trace()
+            # if not last_obs_sub.empty:
+            #     print(usgs_df)
+            #     import pdb; pdb.set_trace()
             results.append(
                 compute_func(
                     nts,

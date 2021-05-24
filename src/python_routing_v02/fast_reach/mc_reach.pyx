@@ -423,19 +423,13 @@ cpdef object compute_network(
                 # Update indexes to point to next reach
                 ireach_cache += reachlen
                 iusreach_cache += usreachlen
-                with gil:
-                    a = 120
-                    weight = math.exp(timestep/-a)  
-                    if gages_size > 0:
-                        for gage_i in range(gages_size):
-                            usgs_position_i = usgs_positions_list[gage_i]
-                            flowveldepth[usgs_position_i, timestep * 3] = usgs_values[gage_i, timestep]
+                if gages_size:
+                    for gage_i in range(gages_size):
+                        usgs_position_i = usgs_positions_list[gage_i]
+                        flowveldepth[usgs_position_i, timestep * 3] = usgs_values[gage_i, timestep]
 
 
             timestep += 1
-    printf("%f\n", flowveldepth)
-    printf("%f\n", data_idx.shape[0])
-    printf("%f\n", nsteps * 3)
 
     # delete the duplicate results that shouldn't be passed along
     # The upstream keys have empty results because they are not part of any reaches
